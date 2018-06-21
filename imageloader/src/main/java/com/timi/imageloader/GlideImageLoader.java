@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.timi.imageloader.transform.GlideCircleTransform;
@@ -27,10 +28,13 @@ public class GlideImageLoader implements ImageLoader {
 
     @Override
     public void displayImage(Context context, String url, final ImageView imageView, int defaultImage) {
+        if (context == null) {
+            throw new RuntimeException("context is not null");
+        }
         if(null==mGlideRequst){
             init(context);
         }
-        finishGlide();
+        resumeGlide();
         mGlideRequst.load(url)
                 .centerCrop()
                 .placeholder(defaultImage)
@@ -44,10 +48,13 @@ public class GlideImageLoader implements ImageLoader {
 
     @Override
     public void displayImage(Context context, String url, final ImageView imageView) {
+        if (context == null) {
+            throw new RuntimeException("context is not null");
+        }
         if(null==mGlideRequst){
             init(context);
         }
-        finishGlide();
+        resumeGlide();
         mGlideRequst.load(url)
                 .transition(withCrossFade())
                 .into(new SimpleTarget<Drawable>() {
@@ -60,10 +67,13 @@ public class GlideImageLoader implements ImageLoader {
 
     @Override
     public void displayImage(Context context, String url, final ImageView imageView, int defaultImage, int errorImage) {
+        if (context == null) {
+            throw new RuntimeException("context is not null");
+        }
         if(null==mGlideRequst){
             init(context);
         }
-        finishGlide();
+        resumeGlide();
         mGlideRequst.load(url)
                 .transition(withCrossFade())
                 .placeholder(defaultImage)
@@ -78,10 +88,13 @@ public class GlideImageLoader implements ImageLoader {
 
     @Override
     public void displayCircleImage(Context context, String url, final ImageView imageView, int defaultImage, int errorImage) {
+        if (context == null) {
+            throw new RuntimeException("context is not null");
+        }
         if(null==mGlideRequst){
             init(context);
         }
-        finishGlide();
+        resumeGlide();
         mGlideRequst.load(url)
                 .transition(withCrossFade())
                 .placeholder(defaultImage)
@@ -103,7 +116,7 @@ public class GlideImageLoader implements ImageLoader {
         if(null==mGlideRequst){
             init(context);
         }
-        finishGlide();
+        resumeGlide();
         mGlideRequst.load(url)
                 .transition(withCrossFade())
                 .placeholder(defaultImage)
@@ -123,11 +136,11 @@ public class GlideImageLoader implements ImageLoader {
             throw new RuntimeException("context is not null");
         }
         if (mGlideRequst != null) {
-            mGlideRequst.pauseAllRequests();
+            mGlideRequst.pauseRequests();
         }
     }
 
-    private void finishGlide(){
+    private void resumeGlide(){
         if (mGlideRequst != null) {
             mGlideRequst.resumeRequests();
         }
