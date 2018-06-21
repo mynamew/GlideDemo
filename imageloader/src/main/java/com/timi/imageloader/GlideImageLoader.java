@@ -1,78 +1,120 @@
 package com.timi.imageloader;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.widget.ImageView;
 
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.timi.imageloader.transform.GlideCircleTransform;
 import com.timi.imageloader.transform.GlideRoundTransform;
 
+import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
+/**
+  * Glide 实现类
+  * author: timi
+  * create at: 2018/6/21 9:15
+  */
 public class GlideImageLoader implements ImageLoader {
-    private GlideRequests glideRequests;
-
+    GlideRequests mGlideRequst;
     @Override
     public void init(Context context) {
-        if (null == glideRequests) {
-            glideRequests = GlideApp.with(context);
-        }
+        if(null==mGlideRequst)
+            mGlideRequst=GlideApp.with(context);
     }
 
     @Override
-    public void displayImage(Context context, String url, ImageView imageView, int defaultImage) {
-        if (null == glideRequests) {
+    public void displayImage(Context context, String url, final ImageView imageView, int defaultImage) {
+        if(null==mGlideRequst){
             init(context);
         }
-        glideRequests.load(url)
+        finishGlide();
+        mGlideRequst.load(url)
                 .centerCrop()
                 .placeholder(defaultImage)
-                .into(imageView);
+                .into(new SimpleTarget<Drawable>() {
+                    @Override
+                    public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                        imageView.setImageDrawable(resource);
+                    }
+                });
     }
 
     @Override
-    public void displayImage(Context context, String url, ImageView imageView) {
-        if (null == glideRequests) {
+    public void displayImage(Context context, String url, final ImageView imageView) {
+        if(null==mGlideRequst){
             init(context);
         }
-        glideRequests.load(url)
-                .centerCrop()
-                .into(imageView);
+        finishGlide();
+        mGlideRequst.load(url)
+                .transition(withCrossFade())
+                .into(new SimpleTarget<Drawable>() {
+                    @Override
+                    public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                        imageView.setImageDrawable(resource);
+                    }
+                });
     }
 
     @Override
-    public void displayImage(Context context, String url, ImageView imageView, int defaultImage, int errorImage) {
-        if (null == glideRequests) {
+    public void displayImage(Context context, String url, final ImageView imageView, int defaultImage, int errorImage) {
+        if(null==mGlideRequst){
             init(context);
         }
-        glideRequests.load(url)
-                .centerCrop()
+        finishGlide();
+        mGlideRequst.load(url)
+                .transition(withCrossFade())
                 .placeholder(defaultImage)
                 .error(errorImage)
-                .into(imageView);
+                .into(new SimpleTarget<Drawable>() {
+                    @Override
+                    public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                        imageView.setImageDrawable(resource);
+                    }
+                });
     }
 
     @Override
-    public void displayCircleImage(Context context, String url, ImageView imageView, int defaultImage, int errorImage) {
-        if (null == glideRequests) {
+    public void displayCircleImage(Context context, String url, final ImageView imageView, int defaultImage, int errorImage) {
+        if(null==mGlideRequst){
             init(context);
         }
-        glideRequests.load(url)
-                .centerCrop()
+        finishGlide();
+        mGlideRequst.load(url)
+                .transition(withCrossFade())
                 .placeholder(defaultImage)
                 .error(errorImage)
                 .transform(new GlideCircleTransform(context))
-                .into(imageView);
+                .into(new SimpleTarget<Drawable>() {
+                    @Override
+                    public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                        imageView.setImageDrawable(resource);
+                    }
+                });
     }
 
     @Override
-    public void displayRoundImage(Context context, String url, ImageView imageView, int defaultImage, int errorImage) {
-        if (null == glideRequests) {
+    public void displayRoundImage(Context context, String url, final ImageView imageView, int defaultImage, int errorImage) {
+        if (context == null) {
+            throw new RuntimeException("context is not null");
+        }
+        if(null==mGlideRequst){
             init(context);
         }
-        glideRequests.load(url)
-                .centerCrop()
+        finishGlide();
+        mGlideRequst.load(url)
+                .transition(withCrossFade())
                 .placeholder(defaultImage)
                 .error(errorImage)
                 .transform(new GlideRoundTransform(context))
-                .into(imageView);
+                .into(new SimpleTarget<Drawable>() {
+                    @Override
+                    public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                        imageView.setImageDrawable(resource);
+                    }
+                });
     }
 
     @Override
@@ -80,15 +122,14 @@ public class GlideImageLoader implements ImageLoader {
         if (context == null) {
             throw new RuntimeException("context is not null");
         }
-        if (glideRequests != null) {
-            glideRequests.resumeRequests();
+        if (mGlideRequst != null) {
+            mGlideRequst.pauseAllRequests();
         }
     }
 
-    private void finishGlide() {
-        if (glideRequests != null) {
-            glideRequests.resumeRequests();
+    private void finishGlide(){
+        if (mGlideRequst != null) {
+            mGlideRequst.resumeRequests();
         }
     }
-
 }

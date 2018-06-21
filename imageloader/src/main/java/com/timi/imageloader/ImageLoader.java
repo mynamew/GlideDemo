@@ -60,7 +60,6 @@ public interface ImageLoader {
      * @param errorImage   错误图  v m
      */
     void displayRoundImage(Context context,String  url,ImageView imageView, @DrawableRes int defaultImage, int errorImage);
-
     /**
      *
      * 销毁内容

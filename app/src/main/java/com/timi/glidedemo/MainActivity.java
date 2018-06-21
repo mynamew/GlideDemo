@@ -4,12 +4,15 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
+import com.timi.imageloader.GlideApp;
 import com.timi.imageloader.ImageLoaderProxy;
+import com.timi.imageloader.transform.GlideRoundTransform;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     @BindView(R.id.iv_normal)
     ImageView ivNormal;
