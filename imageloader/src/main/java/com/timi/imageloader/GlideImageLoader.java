@@ -96,7 +96,7 @@ public class GlideImageLoader implements ImageLoader {
         }
         resumeGlide();
         mGlideRequst.load(url)
-                .transition(withCrossFade())
+//                .transition(withCrossFade())
                 .placeholder(defaultImage)
                 .error(errorImage)
                 .transform(new GlideCircleTransform(context))

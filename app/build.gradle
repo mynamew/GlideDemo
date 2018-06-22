@@ -16,12 +16,20 @@ android {
             }
         }
     }
-
     buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            release {
+                minifyEnabled false
+                //APK 包名
+                android.applicationVariants.all { variant ->
+                    variant.outputs.all {
+                        outputFileName = "wms_${variant.versionName}.apk"
+                    }
+                }
         }
+    }
+    compileOptions {
+        targetCompatibility 1.8
+        sourceCompatibility 1.8
     }
 }
 dependencies {
@@ -31,12 +39,11 @@ dependencies {
     implementation 'com.android.support:recyclerview-v7:' + rootProject.ext.version["support-version"]
     implementation 'com.android.support:support-fragment:' + rootProject.ext.version["support-version"]
     implementation 'com.android.support:animated-vector-drawable:' + rootProject.ext.version["support-version"]
-
     implementation rootProject.ext.dependencies["constraint"]
     implementation rootProject.ext.dependencies["glide"]
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
     annotationProcessor rootProject.ext.dependencies["glide_annotationProcessor"]
-    //Kotlin 
+    //Kotlin
     // implementation 'com.github.bumptech.glide:glide:4.6.1'
     // kapt 'com.github.bumptech.glide:compiler:4.6.1'
     //okhttp
@@ -44,4 +51,9 @@ dependencies {
     implementation project(':imageloader')
     implementation rootProject.ext.dependencies["butterknife"]
     annotationProcessor rootProject.ext.dependencies["butterknifecompiler"]
+    //???
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.12'
+    implementation 'com.tbruyelle.rxpermissions2:rxpermissions:0.9.5@aar'
+    implementation project(':matisse')
 }
