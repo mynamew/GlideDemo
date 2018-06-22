@@ -3,6 +3,7 @@ package com.timi.glidedemo;
 import android.os.Bundle;
 import android.widget.ImageView;
 
+import com.timi.imageloader.GlideTransType;
 import com.timi.imageloader.ImageLoaderProxy;
 
 import butterknife.BindView;
@@ -23,9 +24,8 @@ public class TwoActivity extends BaseActivity {
         setContentView(R.layout.activity_two);
         ButterKnife.bind(this);
         String url = "http://p0.so.qhimgs1.com/bdr/326__/t01ce51d6a2c5d6e214.jpg";
-        ImageLoaderProxy.getInstance().displayCircleImage(this, url, ivCircle, R.mipmap.ic_launcher_round, R.mipmap.ic_launcher_round);
-        ImageLoaderProxy.getInstance().displayImage(this, url, ivNormal);
-        ImageLoaderProxy.getInstance().displayRoundImage(this, url, ivRecentage, R.mipmap.ic_launcher_round, R.mipmap.ic_launcher_round);
-
+        ImageLoaderProxy.getInstance().displayImage(this, url, ivCircle, GlideTransType.CIRCLE);
+        ImageLoaderProxy.getInstance().displayImage(this, url, ivNormal, GlideTransType.NORMAL);
+        ImageLoaderProxy.getInstance().displayImage(this, url, ivRecentage, GlideTransType.ROUND);
     }
 }

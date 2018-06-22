@@ -29,31 +29,25 @@ public class ImageLoaderProxy implements ImageLoader {
     }
 
     @Override
-    public void displayImage(Context context, String imageUrl, ImageView imageView, int defaultImage) {
-        imageLoader.displayImage(context, imageUrl, imageView, defaultImage);
+    public void displayImage(Context context, String url, ImageView imageView, GlideTransType transType, int defaultImage) {
+        displayImage(context, url, imageView, transType, defaultImage, -1);
     }
 
     @Override
-    public void displayImage(Context context, String imageUrl, ImageView imageView) {
-
-        imageLoader.displayImage(context, imageUrl, imageView);
+    public void displayImage(Context context, String url, ImageView imageView, GlideTransType transType) {
+        displayImage(context, url, imageView, transType, -1, -1);
     }
 
     @Override
-    public void displayImage(Context context, String imageUrl, ImageView imageView, int defaultImage, int errorImage) {
-        imageLoader.displayImage(context, imageUrl, imageView, defaultImage, errorImage);
-
+    public void displayLocalImage(Context context, String path, ImageView imageView, GlideTransType type) {
+        imageLoader.displayLocalImage(context, path, imageView, type);
     }
 
     @Override
-    public void displayCircleImage(Context context, String url, ImageView imageView, int defaultImage, int errorImage) {
-        imageLoader.displayCircleImage(context,url,imageView,defaultImage,errorImage);
+    public void displayImage(Context context, String url, ImageView imageView, GlideTransType transType, int defaultImage, int errorImage) {
+        imageLoader.displayImage(context, url, imageView, transType, defaultImage, errorImage);
     }
 
-    @Override
-    public void displayRoundImage(Context context, String url, ImageView imageView, int defaultImage, int errorImage) {
-        imageLoader.displayRoundImage(context,url,imageView,defaultImage,errorImage);
-    }
 
     @Override
     public void onDestroy(Context context) {

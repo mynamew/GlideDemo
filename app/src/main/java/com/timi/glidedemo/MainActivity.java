@@ -2,7 +2,6 @@ package com.timi.glidedemo;
 
 import android.Manifest;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -11,6 +10,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.tbruyelle.rxpermissions2.RxPermissions;
+import com.timi.imageloader.GlideTransType;
 import com.timi.imageloader.ImageLoaderProxy;
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
@@ -34,7 +34,8 @@ public class MainActivity extends BaseActivity {
     @BindView(R.id.iv_recentage)
     ImageView ivRecentage;
 
-    private final  int REQUEST_CODE_CHOOSE=1001;
+    private final int REQUEST_CODE_CHOOSE = 1001;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,9 +60,9 @@ public class MainActivity extends BaseActivity {
 
 
         String url = "http://p0.so.qhimgs1.com/bdr/326__/t01ce51d6a2c5d6e214.jpg";
-        ImageLoaderProxy.getInstance().displayCircleImage(this, url, ivCircle, R.mipmap.glide_logo, R.mipmap.glide_logo);
-        ImageLoaderProxy.getInstance().displayImage(this, url, ivNormal);
-        ImageLoaderProxy.getInstance().displayRoundImage(this, url, ivRecentage, R.mipmap.glide_logo, R.mipmap.glide_logo);
+        ImageLoaderProxy.getInstance().displayImage(this, url, ivCircle, GlideTransType.CIRCLE);
+        ImageLoaderProxy.getInstance().displayImage(this, url, ivNormal, GlideTransType.NORMAL);
+        ImageLoaderProxy.getInstance().displayImage(this, url, ivRecentage, GlideTransType.ROUND);
     }
 
     public void jumpTwoAct(View v) {
@@ -69,7 +70,8 @@ public class MainActivity extends BaseActivity {
     }
 
     /**
-     *选择相片
+     * 选择相片
+     *
      * @param v
      */
     public void selectImg(View v) {
@@ -79,7 +81,7 @@ public class MainActivity extends BaseActivity {
                 .capture(true)
                 .captureStrategy(
                         new CaptureStrategy(true, "com.zhihu.matisse.sample.fileprovider"))
-                .maxSelectable(9)
+                .maxSelectable(1)
                 .addFilter(new GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
                 .gridExpectedSize(
                         getResources().getDimensionPixelSize(R.dimen.grid_expected_size))
@@ -91,7 +93,7 @@ public class MainActivity extends BaseActivity {
                     public void onSelected(
                             @NonNull List<Uri> uriList, @NonNull List<String> pathList) {
                         // DO SOMETHING IMMEDIATELY HERE
-                        Log.e("onSelected", "onSelected: pathList="+pathList );
+                        Log.e("onSelected", "onSelected: pathList=" + pathList);
 
                     }
                 })
@@ -101,17 +103,18 @@ public class MainActivity extends BaseActivity {
                     @Override
                     public void onCheck(boolean isChecked) {
                         // DO SOMETHING IMMEDIATELY HERE
-                        Log.e("isChecked", "onCheck: isChecked="+isChecked );
+                        Log.e("isChecked", "onCheck: isChecked=" + isChecked);
                     }
                 })
                 .forResult(REQUEST_CODE_CHOOSE);
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_CHOOSE && resultCode == RESULT_OK) {
-
+            List<String> paths = Matisse.obtainPathResult(data);
+            ImageLoaderProxy.getInstance().displayLocalImage(this, paths.get(0), ivCircle, GlideTransType.CIRCLE);
         }
     }
-
 }

@@ -1,133 +1,70 @@
 package com.timi.imageloader;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.transition.Transition;
+import com.bumptech.glide.request.RequestOptions;
 import com.timi.imageloader.transform.GlideCircleTransform;
 import com.timi.imageloader.transform.GlideRoundTransform;
 
-import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
+import java.io.File;
+
 /**
-  * Glide 实现类
-  * author: timi
-  * create at: 2018/6/21 9:15
-  */
+ * Glide 实现类
+ * author: timi
+ * create at: 2018/6/21 9:15
+ */
 public class GlideImageLoader implements ImageLoader {
     GlideRequests mGlideRequst;
+
     @Override
     public void init(Context context) {
-        if(null==mGlideRequst)
-            mGlideRequst=GlideApp.with(context);
+        if (null == mGlideRequst)
+            mGlideRequst = GlideApp.with(context);
     }
 
     @Override
-    public void displayImage(Context context, String url, final ImageView imageView, int defaultImage) {
-        if (context == null) {
-            throw new RuntimeException("context is not null");
-        }
-        if(null==mGlideRequst){
-            init(context);
-        }
-        resumeGlide();
-        mGlideRequst.load(url)
-                .centerCrop()
-                .placeholder(defaultImage)
-                .into(new SimpleTarget<Drawable>() {
-                    @Override
-                    public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
-                        imageView.setImageDrawable(resource);
-                    }
-                });
+    public void displayImage(Context context, String url, ImageView imageView, GlideTransType transType, int defaultImage) {
+        displayImage(context, url, imageView, transType, defaultImage, -1);
     }
 
     @Override
-    public void displayImage(Context context, String url, final ImageView imageView) {
-        if (context == null) {
-            throw new RuntimeException("context is not null");
-        }
-        if(null==mGlideRequst){
-            init(context);
-        }
-        resumeGlide();
-        mGlideRequst.load(url)
-                .transition(withCrossFade())
-                .into(new SimpleTarget<Drawable>() {
-                    @Override
-                    public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
-                        imageView.setImageDrawable(resource);
-                    }
-                });
+    public void displayImage(Context context, String url, ImageView imageView, GlideTransType transType) {
+        displayImage(context, url, imageView, transType, -1, -1);
     }
 
     @Override
-    public void displayImage(Context context, String url, final ImageView imageView, int defaultImage, int errorImage) {
+    public void displayLocalImage(Context context, String path, final ImageView imageView, GlideTransType transType) {
         if (context == null) {
             throw new RuntimeException("context is not null");
         }
-        if(null==mGlideRequst){
+        if (null == mGlideRequst) {
             init(context);
         }
         resumeGlide();
-        mGlideRequst.load(url)
-                .transition(withCrossFade())
-                .placeholder(defaultImage)
-                .error(errorImage)
-                .into(new SimpleTarget<Drawable>() {
-                    @Override
-                    public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
-                        imageView.setImageDrawable(resource);
-                    }
-                });
+        /**
+         * 加载path
+         */
+        mGlideRequst.load(new File(path))
+                .apply(getGlideRequestOptions(context, transType, -1, -1))
+                .into(imageView);
     }
 
     @Override
-    public void displayCircleImage(Context context, String url, final ImageView imageView, int defaultImage, int errorImage) {
+    public void displayImage(Context context, String url, ImageView imageView, GlideTransType transType, int defaultImage, int errorImage) {
         if (context == null) {
             throw new RuntimeException("context is not null");
         }
-        if(null==mGlideRequst){
+        if (null == mGlideRequst) {
             init(context);
         }
         resumeGlide();
+        /**
+         * 加载url
+         */
         mGlideRequst.load(url)
-//                .transition(withCrossFade())
-                .placeholder(defaultImage)
-                .error(errorImage)
-                .transform(new GlideCircleTransform(context))
-                .into(new SimpleTarget<Drawable>() {
-                    @Override
-                    public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
-                        imageView.setImageDrawable(resource);
-                    }
-                });
-    }
-
-    @Override
-    public void displayRoundImage(Context context, String url, final ImageView imageView, int defaultImage, int errorImage) {
-        if (context == null) {
-            throw new RuntimeException("context is not null");
-        }
-        if(null==mGlideRequst){
-            init(context);
-        }
-        resumeGlide();
-        mGlideRequst.load(url)
-                .transition(withCrossFade())
-                .placeholder(defaultImage)
-                .error(errorImage)
-                .transform(new GlideRoundTransform(context))
-                .into(new SimpleTarget<Drawable>() {
-                    @Override
-                    public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
-                        imageView.setImageDrawable(resource);
-                    }
-                });
+                .apply(getGlideRequestOptions(context, transType, defaultImage, errorImage))
+                .into(imageView);
     }
 
     @Override
@@ -140,9 +77,41 @@ public class GlideImageLoader implements ImageLoader {
         }
     }
 
-    private void resumeGlide(){
+    private void resumeGlide() {
         if (mGlideRequst != null) {
             mGlideRequst.resumeRequests();
         }
+    }
+
+    /**
+     * 获取Glide 的RequestOption 为了实现圆形 圆角图片
+     *
+     * @param context
+     * @param transType
+     * @return
+     */
+    private RequestOptions getGlideRequestOptions(Context context, GlideTransType transType, int defaultImage, int errorImage) {
+        RequestOptions options = new RequestOptions().centerCrop();
+        switch (transType) {
+            case ROUND:
+                options.transform(new GlideRoundTransform(context));
+                break;
+            case NORMAL:
+                break;
+            case CIRCLE:
+                options.transform(new GlideCircleTransform(context));
+                break;
+            default:
+                break;
+        }
+        //占位
+        if (defaultImage != -1) {
+            options = options.placeholder(defaultImage);
+        }
+        //加载错误图
+        if (errorImage != -1) {
+            options = options.error(errorImage);
+        }
+        return options;
     }
 }
