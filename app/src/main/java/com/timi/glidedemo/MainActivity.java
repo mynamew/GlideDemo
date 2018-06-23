@@ -60,9 +60,11 @@ public class MainActivity extends BaseActivity {
 
 
         String url = "http://p0.so.qhimgs1.com/bdr/326__/t01ce51d6a2c5d6e214.jpg";
+        String url1 = "http://pic1.win4000.com/wallpaper/4/53d71b942a18a.jpg";
+        String url2= "http://image.machine35.com/userpic/58021/20126215173763.jpg";
         ImageLoaderProxy.getInstance().displayImage(this, url, ivCircle, GlideTransType.CIRCLE);
-        ImageLoaderProxy.getInstance().displayImage(this, url, ivNormal, GlideTransType.NORMAL);
-        ImageLoaderProxy.getInstance().displayImage(this, url, ivRecentage, GlideTransType.ROUND);
+        ImageLoaderProxy.getInstance().displayImage(this, url1, ivNormal, GlideTransType.NORMAL);
+        ImageLoaderProxy.getInstance().displayImage(this, url2, ivRecentage, GlideTransType.ROUND);
     }
 
     public void jumpTwoAct(View v) {
